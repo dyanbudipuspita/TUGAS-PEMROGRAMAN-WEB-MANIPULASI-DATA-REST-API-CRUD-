@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ThreadHaus — Toko Pakaian</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- BACKGROUND BLOBS -->
+  <div class="bg-wrap" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M7 3h8l2 4H5L7 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M5 7l-2 12h16L17 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 7v3a2 2 0 004 0V7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="brand-name">ThreadHaus</span>
+        <span class="brand-pill">FASHION</span>
+      </div>
+      <div class="nav-right">
+        <div class="nav-stat">
+          <span class="nav-stat-num" id="product-count">0</span>
+          <span class="nav-stat-label">pakaian</span>
+        </div>
+        <div class="nav-dot"></div>
+        <span class="nav-api">DummyJSON API</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TOAST -->
+  <div id="toast-wrap" class="toast-wrap"></div>
+
+  <!-- PAGE -->
+  <div class="page">
+
+    <!-- HERO -->
+    <div class="hero">
+      <p class="hero-eyebrow">Manajemen Toko Pakaian</p>
+      <h1 class="hero-title">Koleksi Busana<br/><em>Terbaik.</em></h1>
+      <p class="hero-sub">Tambah, edit, dan hapus item pakaian secara real-time<br/>menggunakan DummyJSON REST API.</p>
+    </div>
+
+    <!-- TWO-COL -->
+    <div class="two-col">
+
+      <!-- FORM GLASS CARD -->
+      <div class="glass-card form-card">
+        <div class="card-chip" id="form-chip">
+          <span class="chip-dot chip-green"></span>
+          <span id="chip-label">Tambah Item Pakaian</span>
+        </div>
+
+        <div class="method-tag" id="method-tag">POST</div>
+
+        <form id="product-form" novalidate autocomplete="off">
+          <input type="hidden" id="edit-id"/>
+
+          <div class="field">
+            <label class="label" for="input-name">Nama Pakaian</label>
+            <input class="inp" type="text" id="input-name" placeholder="cth: Kemeja Flannel Oversize"/>
+          </div>
+
+          <div class="field">
+            <label class="label" for="input-price">Harga (IDR)</label>
+            <div class="inp-wrap">
+              <span class="inp-pre">Rp</span>
+              <input class="inp inp-pad" type="number" id="input-price" placeholder="0" min="0" step="1000"/>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="input-category">Kategori</label>
+            <input class="inp" type="text" id="input-category" placeholder="cth: Atasan, Celana, Dress"/>
+          </div>
+
+          <div class="form-foot">
+            <button type="submit" class="btn-submit" id="submit-btn">
+              <span class="btn-ico" id="btn-ico">＋</span>
+              <span id="submit-label">Tambah Pakaian</span>
+            </button>
+            <button type="button" class="btn-ghost hidden" id="cancel-btn" onclick="cancelEdit()">
+              Batal
+            </button>
+          </div>
+        </form>
+
+        <!-- ENDPOINT INFO -->
+        <div class="endpoint-strip">
+          <div class="ep-row"><span class="ep-badge ep-post">POST</span><code>/products/add</code></div>
+          <div class="ep-row"><span class="ep-badge ep-patch">PATCH</span><code>/products/{id}</code></div>
+          <div class="ep-row"><span class="ep-badge ep-del">DELETE</span><code>/products/{id}</code></div>
+        </div>
+      </div>
+
+      <!-- PRODUCT LIST CARD -->
+      <div class="glass-card list-card">
+        <div class="list-top">
+          <h2 class="list-heading">Koleksi Pakaian</h2>
+          <div class="search-pill">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input type="text" id="search-input" class="search-input" placeholder="Cari pakaian..."/>
+          </div>
+        </div>
+
+        <!-- SKELETON -->
+        <div id="skeleton-list" class="prod-grid">
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+        </div>
+
+        <!-- GRID -->
+        <div id="product-list" class="prod-grid hidden"></div>
+
+        <!-- EMPTY -->
+        <div id="empty-state" class="empty hidden">
+          <div class="empty-glyph">◎</div>
+          <p class="empty-msg">Tidak ada produk ditemukan</p>
+          <p class="empty-hint">Coba ubah kata kunci pencarian</p>
+        </div>
+      </div>
+
+    </div><!-- /two-col -->
+  </div><!-- /page -->
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div id="confirm-modal" class="modal-bg hidden">
+    <div class="modal-card">
+      <div class="modal-icon-wrap">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/>
+          <path d="M16 9v8M16 22v1" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3 class="modal-title">Hapus Pakaian?</h3>
+      <p class="modal-body" id="modal-desc">Item ini akan dihapus dari koleksi.</p>
+      <div class="modal-actions">
+        <button class="mbtn mbtn-cancel" onclick="closeModal()">Batal</button>
+        <button class="mbtn mbtn-del" id="confirm-delete-btn">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
